@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Coffeebreak WifiSIM One-Tap</title>
+<meta name="theme-color" content="#000"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WifiSIM"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><link rel="stylesheet" href="common.css"><script>window.CB_PRESENCE=1</script><script>window.CB_NOQR=1</script><script src="peerjs.min.js"></script><script src="core.js"></script></head><body>
+<header><img src="logo.png" alt="Coffeebreak logo"><h1>WifiSIM One-Tap</h1></header>
+<p class="status off" id="st" role="status" aria-live="polite">Reconnecting…</p>
+<p class="sync" id="sync" aria-live="polite"></p>
+<main id="done" aria-live="polite">
+<div class="qrbox"><p class="note">Your call ID<br><b id="me" style="font-size:1.5rem;color:#2ee66b"></b></p></div>
+<iframe id="phonepanel" title="Coffeebreak phone" allow="microphone; autoplay; screen-wake-lock" style="width:100%;height:1150px;border:3px solid #2ee66b;border-radius:20px;background:#000"></iframe>
+
+<p class="note">Calls over WiFi between Coffeebreak app users. This is not a mobile carrier SIM and does not give you a real phone number.</p>
+<button id="share" class="big blue" aria-label="Share my call ID with family or friends">Share my call ID</button>
+
+<p class="note">Saved on this device. It goes online by itself every time you open it.</p>
+
+<button id="linkb" class="big grey small" aria-label="Link another device">Link another device</button>
+<button id="testb" class="big grey small" aria-label="Test my connection">Test my connection</button>
+</main>
+<section id="linkov" class="ov hide" aria-label="Link another device"><p class="num" style="color:#ffd84d;font-size:2rem">Link another device</p>
+<p class="note">On your other phone, tablet or computer, open the link. Contacts, names and recent calls then stay the same on both, and calls ring on every linked device.</p>
+<div id="lqr" style="word-break:break-all;font-size:1rem;color:#9fd"></div>
+<button id="lshare" class="big blue small">Send the link</button><button id="lback" class="big grey small">Back</button></section>
+<section id="testov" class="ov hide" aria-live="polite"><p class="num" style="color:#ffd84d;font-size:2rem">Test my connection</p><p class="note" id="testres">Testing…</p><button id="tback" class="big grey small">Back</button></section>
+<footer>© Karen O'Brien (Coffeebreak). All designs, music, art and content remain the property of Karen O'Brien. Your purchase gives you a personal-use licence only. It doesn't transfer ownership or allow resale, copying or redistribution.</footer>
+<script src="extras.js"></script><script src="sim.js"></script></body></html>

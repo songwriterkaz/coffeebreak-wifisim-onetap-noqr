@@ -1,0 +1,27 @@
+*{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:stretch;padding:14px;gap:14px}
+header{display:flex;align-items:center;gap:12px;justify-content:center}header img{width:64px;height:auto;background:#fff;border-radius:14px;padding:4px}
+header h1{font-size:1.6rem;margin:0;color:#ffd84d}
+.big{display:block;width:100%;border:4px solid #fff;border-radius:28px;font-size:2.2rem;font-weight:800;padding:28px 12px;cursor:pointer;color:#000;background:#ffd84d;line-height:1.15}
+.big:focus-visible{outline:6px solid #4dd2ff;outline-offset:4px}
+.green{background:#2ee66b}.red{background:#ff2d2d;color:#fff}.blue{background:#4dd2ff}.grey{background:#ddd}
+.note{font-size:1.25rem;text-align:center;line-height:1.4;margin:0}
+.num{font-size:2.6rem;font-weight:900;text-align:center;letter-spacing:2px;color:#2ee66b;margin:4px 0}
+.hide{display:none!important}
+footer{margin-top:auto;font-size:.85rem;color:#ccc;text-align:center;line-height:1.35;padding-top:10px;border-top:1px solid #444}
+#qr{display:flex;justify-content:center}#qr img,#qr canvas{background:#fff;padding:10px;border-radius:12px}
+.status{font-size:2rem;font-weight:900;text-align:center;border-radius:20px;padding:12px;margin:0}
+.status.on{background:#0d3d1c;color:#2ee66b;border:3px solid #2ee66b}.status.off{background:#3d2e00;color:#ffbf00;border:3px solid #ffbf00}
+.sync{text-align:center;font-size:1.1rem;color:#9fe8b4;margin:0;min-height:1.3em}
+.ov{position:static;border:3px solid #ffd84d;border-radius:20px;background:#000;padding:20px;display:flex;flex-direction:column;gap:16px;justify-content:center;z-index:20}
+.small{font-size:1.4rem;padding:16px}
+.embed header,.embed footer,.embed #linkb{display:none}
+.status.pz{background:#222;color:#ddd;border:3px solid #ddd}
+#mute.on{background:#ff2d2d;color:#fff}
+#qr img,#qr canvas{padding:6px}
+
+body{padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));max-width:1000px;margin:0 auto;-webkit-tap-highlight-color:transparent}
+button,a,input{touch-action:manipulation}input{width:100%}
+@media (min-width:700px){#contacts{grid-template-columns:1fr 1fr}.big{font-size:2.4rem}}
+@media (orientation:landscape) and (min-width:900px){.big{padding:20px 12px}}
+.qrbox{display:flex;flex-direction:column;align-items:center;text-align:center}.qrbox #qr,.qrbox #pqr{display:flex;justify-content:center}.qrbox img,.qrbox canvas{width:min(62vw,280px)!important;height:auto!important;min-width:200px;background:#fff!important;padding:18px!important;border-radius:14px;image-rendering:pixelated}
