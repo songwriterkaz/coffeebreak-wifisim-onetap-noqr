@@ -1,5 +1,5 @@
 'use strict';
-const APP_VER=6;
+const APP_VER=7;
 const $=s=>document.querySelector(s),PFX='coffeebreak-dsim-v1-';
 const TURN_FREE=[];
 const STUN=[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302','stun:stun3.l.google.com:19302','stun:stun4.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:'stun:global.stun.twilio.com:3478'}];
@@ -57,6 +57,7 @@ function startPeer(asHub,existing){clearTimeout(retry.t);if(asHub===undefined)as
    d.on('data',x=>{if(!x||typeof x!=='object')return;if(x.t==='state'){merge(x.s);toDevs({t:'state',s:S})}else onHubMsg(d.peer,x)});
    const gone=()=>{delete devs[d.peer];state()};d.on('close',gone);d.on('error',gone)}
   else if(m.kind==='pair'||m.kind==='pairok'){window.onPair&&window.onPair(m,d.peer);setTimeout(()=>{try{d.close()}catch(e){}},4000)}
+  else if(m.kind==='keep'){window.cbKeepIn&&window.cbKeepIn(d)}
   else window.onCallerConn&&window.onCallerConn(d)});
  p.on('call',c=>{checkVer(c.metadata&&c.metadata.ver);onCall(c)})}
 function retry(asHub){ready=false;state();clearTimeout(retry.t);retry.t=setTimeout(()=>startPeer(asHub),back);back=Math.min(back*2,900)}
@@ -119,6 +120,6 @@ function stopCode(){codeVal&&window.cbUnsub&&cbUnsub('code'+codeVal);try{codePee
 function sendCode(code){const bk=window.cbPub&&cbPub('code'+code,{kind:'pair',ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'});if(!peer||!ready)return !!bk;try{const d=peer.connect(PFX+'code'+code,{metadata:{kind:'pair',ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'},serialization:'json'});setTimeout(()=>{try{d.close()}catch(e){}},4000);return true}catch(e){return false}}
 
 // same version everywhere: if the other phone is newer, update and reload this one
-function checkVer(v){v=+v||0;if(v>APP_VER&&get('reloadFor',0)<v){put('reloadFor',v);try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).finally(()=>setTimeout(()=>location.reload(),800))}catch(e){location.reload()}}}
+function checkVer(v){v=+v||0;if(v>APP_VER&&get('reloadFor',0)<v){window.cbAllowLeave=1;put('reloadFor',v);try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update()).finally(()=>setTimeout(()=>location.reload(),800))}catch(e){location.reload()}}}
 
 window.cbSub&&cbSub(myNum().replace(/-/g,''));
