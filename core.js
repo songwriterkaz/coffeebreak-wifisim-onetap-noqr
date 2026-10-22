@@ -103,7 +103,7 @@ let wl=null;async function wake(){try{if('wakeLock' in navigator&&!document.hidd
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){wake();watchdog()}});['click','touchend'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));wake();
 
 // pairing: the hello travels through the signalling server itself, so it works even before audio can connect
-const PHONE_URL=/github\.io$/.test(location.hostname)?'https://songwriterkaz.github.io/coffeebreak-onetap-phone'+(window.CB_NOQR?'-noqr':'')+'/':location.origin+(window.CB_NOQR?'/phone-noqr/':'/phone/');
+const PHONE_URL=!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'https://songwriterkaz.github.io/coffeebreak-onetap-phone'+(window.CB_NOQR?'-noqr':'')+'/':location.origin+(window.CB_NOQR?'/phone-noqr/':'/phone/');
 function pairURL(){return PHONE_URL+'?pair='+myNum()+'&n='+encodeURIComponent((S.profile&&S.profile.name)||'Coffeebreak friend')}
 function sendPair(to,kind){if(!peer||!ready)return false;try{const d=peer.connect(pid(to),{metadata:{kind,ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'},serialization:'json'});setTimeout(()=>{try{d.close()}catch(e){}},4000);return true}catch(e){return false}}
 (()=>{const q=new URLSearchParams(location.search),a=norm(q.get('pair'));if(a&&a!==myNum()){put('pairWith',{n:a,name:String(q.get('n')||'').slice(0,40)||'Coffeebreak friend',t:Date.now()});history.replaceState(null,'',location.pathname)}})();
