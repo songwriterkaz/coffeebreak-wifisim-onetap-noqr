@@ -43,7 +43,7 @@ function toHub(m){try{link&&link.open&&link.send(m)}catch(e){}}
 function kill(){const o=peer;peer=null;try{o&&o.destroy()}catch(e){}ready=false;devs={};link=null;synced=false}
 function startPeer(asHub,existing){clearTimeout(retry.t);if(asHub===undefined)asHub=true;const me=myNum();kill();role=asHub?'hub':'dev';state();
  if(PRESENCE){asHub=false;role='presence'}
- const p=existing||new Peer(PRESENCE?pid(me)+'s'+devId:asHub?pid(me):pid(me)+'d'+devId,{config:ICE,debug:0,pingInterval:4000});peer=p;
+ let p;try{p=existing||new Peer(PRESENCE?pid(me)+'s'+devId:asHub?pid(me):pid(me)+'d'+devId,{config:ICE,debug:0,pingInterval:4000})}catch(e){retry(asHub);return};peer=p;
  const opened=()=>{if(p!==peer)return;ready=true;back=200;lastOK=Date.now();if(connectMs===null)connectMs=Math.round(performance.now()-T0);state();if(role==='dev')linkHub();onReady()};if(existing&&p.open)setTimeout(opened,0);else p.on('open',opened);
  p.on('disconnected',()=>{if(p!==peer)return;ready=false;state();setTimeout(()=>{if(p===peer&&p.disconnected&&!p.destroyed)try{p.reconnect()}catch(e){retry(asHub)}},300)});
  p.on('close',()=>{if(p===peer){ready=false;state();retry(asHub)}});
@@ -63,7 +63,7 @@ function retry(asHub){ready=false;state();clearTimeout(retry.t);retry.t=setTimeo
 function restart(){startPeer(PRESENCE?false:(role==='hub'||!get('lk')))}
 let claimBack=4000;function claimSoon(ms){if(PRESENCE)return;clearTimeout(claimT);claimT=setTimeout(()=>{if(role!=='dev'||(link&&link.open))return;
  // probe for the call ID without dropping the current connection; only swap if we get it
- const q=new Peer(pid(myNum()),{config:ICE,debug:0,pingInterval:4000});let ok=false;
+ let q;try{q=new Peer(pid(myNum()),{config:ICE,debug:0,pingInterval:4000})}catch(e){claimSoon(claimBack);return}let ok=false;
  q.on('open',()=>{ok=true;claimBack=4000;startPeer(true,q)});
  q.on('error',e=>{if(ok)return;try{q.destroy()}catch(_){}claimBack=Math.min(claimBack*2,60000);if(e.type==='unavailable-id'&&ready&&role==='dev'&&!(link&&link.open))linkHub();else claimSoon(claimBack)})},ms)}
 function linkHub(){const me=myNum();if(!get('lk')){claimSoon(3000);return}
@@ -97,7 +97,7 @@ function testText(r){return r.relay?'Connection good. Calls can go through the f
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 // start the instant the script loads, before any UI work
-if(navigator.onLine!==false)startPeer(!PRESENCE);
+if(navigator.onLine!==false)try{startPeer(!PRESENCE)}catch(e){setTimeout(()=>{try{startPeer(!PRESENCE)}catch(_){}},1000)}
 // keep the screen awake while the phone is open
 let wl=null;async function wake(){try{if('wakeLock' in navigator&&!document.hidden&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}}catch(e){wl=null}}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){wake();watchdog()}});['click','touchend'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));wake();
@@ -105,12 +105,12 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){wake();wa
 // pairing: the hello travels through the signalling server itself, so it works even before audio can connect
 const PHONE_URL=!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'https://songwriterkaz.github.io/coffeebreak-onetap-phone'+(window.CB_NOQR?'-noqr':'')+'/':location.origin+(window.CB_NOQR?'/phone-noqr/':'/phone/');
 function pairURL(){return PHONE_URL+'?pair='+myNum()+'&n='+encodeURIComponent((S.profile&&S.profile.name)||'Coffeebreak friend')}
-function sendPair(to,kind){const bk=window.cbPub&&cbPub(to.replace(/-/g,''),{kind,ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'});if(!peer||!ready)return !!bk;try{const d=peer.connect(pid(to),{metadata:{kind,ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'},serialization:'json'});setTimeout(()=>{try{d.close()}catch(e){}},4000);return true}catch(e){return false}}
+function sendPair(to,kind){if(!peer||!ready){};const bk=window.cbPub&&cbPub(to.replace(/-/g,''),{kind,ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'});if(!peer||!ready)return !!bk;try{const d=peer.connect(pid(to),{metadata:{kind,ver:APP_VER,num:myNum(),name:(S.profile&&S.profile.name)||'Coffeebreak friend'},serialization:'json'});setTimeout(()=>{try{d.close()}catch(e){}},4000);return true}catch(e){return false}}
 (()=>{const q=new URLSearchParams(location.search),a=norm(q.get('pair'));if(a&&a!==myNum()){put('pairWith',{n:a,name:String(q.get('n')||'').slice(0,40)||'Coffeebreak friend',t:Date.now()});history.replaceState(null,'',location.pathname)}})();
 // short code pairing (no QR): a temporary helper ID made from a 6 digit code
 let codePeer=null,codeVal=null;
 function startCode(cb){if(codePeer&&codeVal&&codePeer.open){cb(codeVal);return}try{codePeer&&codePeer.destroy()}catch(e){}
- const c=String(100000+(crypto.getRandomValues(new Uint32Array(1))[0]%900000));window.cbSub&&cbSub('code'+c);const q=new Peer(PFX+'code'+c,{config:ICE,debug:0,pingInterval:4000});codePeer=q;
+ const c=String(100000+(crypto.getRandomValues(new Uint32Array(1))[0]%900000));window.cbSub&&cbSub('code'+c);let q;try{q=new Peer(PFX+'code'+c,{config:ICE,debug:0,pingInterval:4000})}catch(e){codeVal=c;cb(c);return}codePeer=q;
  q.on('open',()=>{codeVal=c;cb(c);clearTimeout(startCode.t);startCode.t=setTimeout(stopCode,15*60000)});
  q.on('error',e=>{if(q!==codePeer)return;if(e.type==='unavailable-id'){codePeer=null;startCode(cb)}else setTimeout(()=>{if(q===codePeer&&!q.open){codePeer=null;startCode(cb)}},1000)});
  q.on('disconnected',()=>{try{q.reconnect()}catch(e){}});
