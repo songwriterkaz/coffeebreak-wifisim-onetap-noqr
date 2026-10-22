@@ -31,6 +31,8 @@ function wire(d,n){K.link=d;K.peerNum=n;d.on('data',function(x){if(!x||typeof x!
  d.on('open',function(){K.lastPong=Date.now();bar()});var gone=function(){if(K.link===d){K.link=null;K.drops++;bar();setTimeout(function(){keep(true)},300)}};d.on('close',gone);d.on('error',gone)}
 var kt=null;function keep(now){clearTimeout(kt);if(!isPhone)return;var n=target();if(!n){kt=setTimeout(keep,3000);return}K.peerNum=n;
  if(K.link&&K.link.open&&K.link.cbNum===n){bar();return}
+ // only one side dials, so the two phones never fight over the link; the other side waits and answers
+ if(myNum()>n){bar();kt=setTimeout(keep,3000);return}
  if(typeof peer==='undefined'||!peer||!ready||peer.disconnected){bar();kt=setTimeout(keep,now?700:1500);return}
  try{if(K.link)K.link.close()}catch(e){}var d=peer.connect(pid(n),{metadata:{kind:'keep',ver:APP_VER,num:myNum()},serialization:'json',reliable:true});d.cbNum=n;wire(d,n);
  kt=setTimeout(function(){if(!d.open){try{d.close()}catch(e){}if(K.link===d)K.link=null;keep()}},5000)}
