@@ -35,7 +35,7 @@ var kt=null;function keep(now){clearTimeout(kt);if(!isPhone)return;var n=target(
  if(myNum()>n){bar();kt=setTimeout(keep,3000);return}
  if(typeof peer==='undefined'||!peer||!ready||peer.disconnected){bar();kt=setTimeout(keep,now?700:1500);return}
  try{if(K.link)K.link.close()}catch(e){}var d=peer.connect(pid(n),{metadata:{kind:'keep',ver:APP_VER,num:myNum()},serialization:'json',reliable:true});d.cbNum=n;wire(d,n);
- kt=setTimeout(function(){if(!d.open){try{d.close()}catch(e){}if(K.link===d)K.link=null;keep()}},5000)}
+ kt=setTimeout(function(){if(!d.open){try{d.close()}catch(e){}if(K.link===d)K.link=null;keep()}},15000)}
 W.cbKeepIn=function(d){var m=d.metadata||{},n=norm(m.num);if(!n)return;if(K.link&&K.link.open&&K.link.cbNum===n&&K.link!==d){try{K.link.close()}catch(e){}}d.cbNum=n;wire(d,n);try{put('last',n)}catch(e){}};
 setInterval(function(){if(!isPhone)return;var d=K.link;if(d&&d.open){try{d.send({t:'kping'})}catch(e){}if(Date.now()-K.lastPong>12000){try{d.close()}catch(e){}}}else keep();bar()},4000);
 function start(){fsBtn();bar();if(isPhone)keep(true);wakeUp()}
